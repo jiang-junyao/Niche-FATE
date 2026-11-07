@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nichefate"
+version = "0.2.0"
+description = "Niche-aware cell fate inference from spatial transcriptomics time courses"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["numpy", "scipy", "pandas", "scikit-learn", "torch", "anndata", "matplotlib"]
+
+[project.optional-dependencies]
+logistic = ["statsmodels"]
+
+[tool.setuptools.packages.find]
+include = ["nichefate*"]
+
+[tool.setuptools.package-data]
+nichefate = ["data/*.csv"]
