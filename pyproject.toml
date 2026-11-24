@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nichefate"
-version = "0.2.0"
+version = "0.3.0"
 description = "Niche-aware cell fate inference from spatial transcriptomics time courses"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -17,4 +17,4 @@ logistic = ["statsmodels"]
 include = ["nichefate*"]
 
 [tool.setuptools.package-data]
-nichefate = ["data/*.csv"]
+nichefate = ["data/*.csv", "data/*.R"]

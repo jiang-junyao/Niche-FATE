@@ -275,7 +275,8 @@ def _one(result, fate, cells, composition_key, covariate_keys, n_pcs, radius, bl
 
 
 def drivers(result, fate, cells=None, composition_key=None, covariate_keys=None, n_pcs=20, radius=5.0, block=10.0,
-            n_perm=1000, min_detect=None, celltype_key=None, sign_check=True, method="partial", signal_groups=None, seed=0):
+            n_perm=1000, min_detect=None, celltype_key=None, min_signif=None, signif_key="nf_signif", sign_check=True, method="partial",
+            signal_groups=None, seed=0):
     """Rank received signals by their association with the fate, among the source cells.
 
     method='partial': partial rank correlation of each signal with the fate probability, adjusting for the cell's own state
@@ -286,10 +287,13 @@ def drivers(result, fate, cells=None, composition_key=None, covariate_keys=None,
     result / fate may be lists (e.g. one per animal): z is combined across them (Stouffer), p = two-sided normal p.
     min_detect: keep signals whose best ligand-receptor pair has ligand and receptor detected in >= this fraction of some
     group of `celltype_key` (default composition_key or groupby); e.g. 0.10 (CellPhoneDB default), 0.05 for low-depth data.
+    min_signif: keep signals that CytoSignal calls significantly received (per-cell test, see signal_significance) in >= this
+    fraction of the tested source cells (averaged over results); needs adata1.obsm[signif_key] from signal_significance().
+    Signals not tested by CytoSignal are dropped. Column 'signif' = that fraction.
     sign_check: column 'stable' = unadjusted Spearman direction agrees with the adjusted one in every result.
     signal_groups: optional mapping signal -> group (dict / Series), e.g. ligand-receptor pair -> pathway; signals of a group
     are averaged before testing.
-    Returns signal, r, z, p, q (Benjamini-Hochberg over the kept signals) [, stable, detect], sorted by z;
+    Returns signal, r, z, p, q (Benjamini-Hochberg over the kept signals) [, stable, signif, detect], sorted by z;
     Each result gets `.adjusted`: per-cell signals after removing the covariates (DataFrame, cells x signals)."""
     many = isinstance(result, (list, tuple))
     results, fates = (list(result), list(fate)) if many else ([result], [fate])
@@ -307,6 +311,16 @@ def drivers(result, fate, cells=None, composition_key=None, covariate_keys=None,
             out[f"z_{i + 1}"] = Z[:, i]
     if sign_check:
         out["stable"] = np.all([(np.sign(d.loc[names, c].values) == np.sign(out.z.values)) for d in parts for c in ("raw", "r")], 0)
+    if min_signif is not None:
+        fr = []
+        for res, a in zip(results, adjs):
+            if signif_key not in res.adata1.obsm:
+                raise ValueError(f"min_signif needs adata1.obsm['{signif_key}']: run nichefate.signal_significance() on each section first")
+            S = res.adata1.obsm[signif_key]
+            S = S if isinstance(S, pd.DataFrame) else pd.DataFrame(S, index=res.adata1.obs_names)
+            fr.append(S.reindex(index=a.index, columns=out.signal).astype(float).mean(0).values)
+        out["signif"] = np.nanmean(np.vstack(fr), 0) if len(fr) > 1 else fr[0]
+        out = out[out.signif >= min_signif]
     if min_detect is not None:
         key = celltype_key or composition_key or results[0].groupby
         det = detection([r.adata1 for r in results], key)
