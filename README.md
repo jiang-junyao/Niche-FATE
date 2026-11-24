@@ -46,23 +46,12 @@ Against the true fates (`ad1.obs["true_fate"]`), P(lineage B) gives an AUROC of 
 
 Inputs for your own data: one AnnData per section with raw counts in `.X`, coordinates in `.obsm["spatial"]` and cell states in `.obs`. Without `lr` and `signals`, `compute_niche` scores received signals from the built-in mouse or human ligand–receptor pairs (CellChat and CellPhoneDB).
 
-### Optional: keep only signals that CytoSignal calls significant
-
-`nf.signal_significance` runs the official [CytoSignal](https://github.com/welch-lab/cytosignal) per-cell significance test (spatial FDR, p < 0.05) for the ligand–receptor pairs behind each signal. `drivers(..., min_signif=...)` then reports only signals that are significantly received by at least that fraction of the tested cells. Needs R with the `cytosignal` package.
-
-```python
-nf.signal_significance(ad_t1, um_per_unit=1.0, min_counts=20)        # coordinates in µm; low-depth panel -> lower QC threshold
-d = nf.drivers(res, p, cells=["homeostatic"], composition_key="cell_type", min_signif=0.05)
-```
-
-## Tutorials
+## Examples
 
 Data are in [`tutorial_data/`](tutorial_data).
 
-| Tutorial | Data | Question |
-|---|---|---|
-| [1 · Midbrain development](tutorials/1_midbrain_development.ipynb) | Stereo-seq, mouse midbrain E12.5–E16.5 | which radial glia become glioblasts or neuroblasts |
-| [2 · Alzheimer's disease](tutorials/2_alzheimers_microglia.ipynb) | Xenium, TgCRND8 vs wild type | homeostatic microglia becoming DAM and the signals associated with this |
+- [Midbrain development](tutorials/1_midbrain_development.ipynb): Stereo-seq of the mouse midbrain at E12.5–E16.5. Which radial glia become glioblasts or neuroblasts.
+- [Alzheimer's disease](tutorials/2_alzheimers_microglia.ipynb): Xenium of TgCRND8 and wild-type mice. Which homeostatic microglia become DAM, and the signals associated with this.
 
 ## Contact
 
