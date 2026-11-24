@@ -5,3 +5,4 @@ __pycache__/
 dataset paper/
 tutorials/3_colitis_regeneration.ipynb
 tutorial_data/colitis/
+tutorial_data/starmap_*.h5ad

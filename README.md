@@ -62,7 +62,7 @@ Data are in [`tutorial_data/`](tutorial_data).
 | Tutorial | Data | Question |
 |---|---|---|
 | [1 · Midbrain development](tutorials/1_midbrain_development.ipynb) | Stereo-seq, mouse midbrain E12.5–E16.5 | which radial glia become glioblasts or neuroblasts |
-| [2 · Alzheimer's disease](tutorials/2_alzheimers_microglia.ipynb) | Xenium, TgCRND8 vs wild type; STARmap PLUS, TauPS2APP vs control | homeostatic microglia becoming DAM and DAM reverting, the signals associated with conversion, and the relation to amyloid plaques |
+| [2 · Alzheimer's disease](tutorials/2_alzheimers_microglia.ipynb) | Xenium, TgCRND8 vs wild type | homeostatic microglia becoming DAM and the signals associated with this |
 
 ## Contact
 
